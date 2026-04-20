@@ -1,0 +1,150 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TaskFlow – docker-compose
+# Services: frontend · api-gateway · user-service · project-service
+#           task-service · notification-service
+# Databases: one PostgreSQL instance with 4 databases (users_db, projects_db,
+#            tasks_db, notifications_db) – created via init scripts
+# ─────────────────────────────────────────────────────────────────────────────
+
+x-common-env: &common-env
+  JWT_SECRET: ${JWT_SECRET:-taskflow-secret-key-change-in-prod}
+
+x-db-env: &db-env
+  DB_HOST: postgres
+  DB_PORT: 5432
+  DB_USER: ${POSTGRES_USER:-taskflow}
+  DB_PASSWORD: ${POSTGRES_PASSWORD:-taskflow}
+
+x-restart: &restart
+  restart: unless-stopped
+
+networks:
+  taskflow-net:
+    driver: bridge
+
+volumes:
+  postgres-data:
+
+services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    <<: *restart
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-taskflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-taskflow}
+      POSTGRES_DB: users_db        # default db; others created via init script
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init-dbs.sql:/docker-entrypoint-initdb.d/init-dbs.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-taskflow} -d users_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - taskflow-net
+
+  # ── User Service (Go) ───────────────────────────────────────────────────────
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    <<: *restart
+    environment:
+      <<: [*common-env, *db-env]
+      DB_NAME: users_db
+      PORT: 8001
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - taskflow-net
+
+  # ── Project Service (Python/FastAPI) ────────────────────────────────────────
+  project-service:
+    build:
+      context: ./project-service
+      dockerfile: Dockerfile
+    <<: *restart
+    environment:
+      <<: *db-env
+      DB_NAME: projects_db
+      PORT: 8002
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - taskflow-net
+
+  # ── Task Service (Go) ───────────────────────────────────────────────────────
+  task-service:
+    build:
+      context: ./task-service
+      dockerfile: Dockerfile
+    <<: *restart
+    environment:
+      <<: *db-env
+      DB_NAME: tasks_db
+      PORT: 8003
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - taskflow-net
+
+  # ── Notification Service (Python/FastAPI) ───────────────────────────────────
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    <<: *restart
+    environment:
+      <<: *db-env
+      DB_NAME: notifications_db
+      PORT: 8004
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - taskflow-net
+
+  # ── API Gateway (Node.js) ───────────────────────────────────────────────────
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    <<: *restart
+    environment:
+      <<: *common-env
+      PORT: 3000
+      USER_SERVICE_URL:         http://user-service:8001
+      PROJECT_SERVICE_URL:      http://project-service:8002
+      TASK_SERVICE_URL:         http://task-service:8003
+      NOTIFICATION_SERVICE_URL: http://notification-service:8004
+      FRONTEND_URL:             http://localhost
+    depends_on:
+      - user-service
+      - project-service
+      - task-service
+      - notification-service
+    networks:
+      - taskflow-net
+
+  # ── Frontend (React → nginx) ────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    <<: *restart
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - taskflow-net
