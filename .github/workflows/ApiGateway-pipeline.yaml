@@ -73,4 +73,4 @@ jobs:
         git config --local user.name "abdelhadyi"
         git add kubernetes/api-gateway-svc/deploy.yaml
         git commit -a -m "updating the image version to ${{ github.run_id }} [skip ci]"
-        git push
+        git push origin HEAD:${{ github.head_ref }}
