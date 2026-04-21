@@ -8,6 +8,7 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "test": "jest --coverage"
+    "build": "echo 'No build step required for this project'"
   },
   "dependencies": {
     "cors": "^2.8.5",
