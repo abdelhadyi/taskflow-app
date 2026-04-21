@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: apigateway
-        image: 
+        image: abdelhadii/workflow-app:24700636699
         ports:
         - containerPort: 3000
 
