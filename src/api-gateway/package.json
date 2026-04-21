@@ -7,7 +7,7 @@
     "lint": "eslint src",
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "test": "jest --coverage",
+    "test": "jest --coverage --forceExit --detectOpenHandles",
     "build": "echo 'No build step required for this project'"
   },
   "dependencies": {
