@@ -71,6 +71,8 @@ jobs:
       run: |
         git config --local user.email "abdelhady.elsayedd@gmail.com"
         git config --local user.name "abdelhadyi"
+        git fetch origin ${{ github.head_ref }}
+        git checkout ${{ github.head_ref }}
         git add kubernetes/api-gateway-svc/deploy.yaml
         git commit -a -m "updating the image version to ${{ github.run_id }} [skip ci]"
         git push origin HEAD:${{ github.head_ref }}
