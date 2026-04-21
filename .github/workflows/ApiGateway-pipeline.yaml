@@ -69,7 +69,7 @@ jobs:
 
     - name: update-image
       run: |
-        git config --local user.email "abdelhady.elsayed@gmail.com"
+        git config --local user.email "abdelhady.elsayedd@gmail.com"
         git config --local user.name "abdelhadyi"
         git add kubernetes/api-gateway-svc/deploy.yaml
         git commit -a -m "updating the image version to ${{ github.run_id }} [skip ci]"
