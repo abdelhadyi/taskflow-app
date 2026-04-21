@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskflow-apigateway-deployment
+  labels:
+    app: taskflow-apigateway
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: taskflow-apigateway
+  template:
+    metadata:
+      labels:
+        app: taskflow-apigateway
+    spec:
+      containers:
+      - name: apigateway
+        image: abdelhadii/workflow-app:24700636699
+        ports:
+        - containerPort: 3000
+

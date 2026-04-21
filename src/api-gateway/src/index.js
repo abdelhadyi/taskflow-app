@@ -4,6 +4,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const jwt = require('jsonwebtoken');
 
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -76,6 +77,8 @@ app.use('/api/notifications', proxy(SERVICES.notification));
 // ── 404 ───────────────────────────────────────────────────────────────────────
 app.use((_req, res) => res.status(404).json({ error: 'Route not found' }));
 
-app.listen(PORT, '0.0.0.0', () => console.log(`API Gateway running on port ${PORT}`));
+if (require.main === module) {
+  app.listen(PORT, '0.0.0.0', () => console.log(`API Gateway running on port ${PORT}`));
+}
 
 module.exports = app;
