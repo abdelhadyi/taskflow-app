@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 
 const JWT_SECRET = process.env.JWT_SECRET || 'taskflow-secret-key';
 
+
 const SERVICES = {
   user:         process.env.USER_SERVICE_URL         || 'http://user-service:8001',
   project:      process.env.PROJECT_SERVICE_URL      || 'http://project-service:8002',
