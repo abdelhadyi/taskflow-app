@@ -1,4 +1,4 @@
-name: frontend pipeline
+name: frontend-pipeline
 on:
   pull_request:
     branches: 
