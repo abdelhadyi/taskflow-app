@@ -18,12 +18,10 @@ jobs:
       with:
         node-version: 20
         cache: 'npm'
-#       cache-dependency-path: src/api-gateway/package-lock.json
 
     - name: lint-test-build
       run: |
         npm install 
-      # npm run lint
         npm test
         npm run build
       working-directory: src/frontend
