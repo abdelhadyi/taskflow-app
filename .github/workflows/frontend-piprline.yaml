@@ -5,7 +5,6 @@ on:
       - main
     paths: 
       - 'src/frontend/**'
-      - 'kubernetes/frontend/**'
 
 jobs:
   Tests:
@@ -49,7 +48,7 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         push: true
-        tags: ${{ vars.DOCKERHUB_USERNAME }}/workflow-app:${{ github.run_id }}
+        tags: ${{ vars.DOCKERHUB_USERNAME }}/taskflow-app-frontend:${{ github.run_id }}
         context: src/frontend/
         file: src/frontend/Dockerfile
 
