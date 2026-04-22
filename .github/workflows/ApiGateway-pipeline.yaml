@@ -49,7 +49,7 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         push: true
-        tags: ${{ vars.DOCKERHUB_USERNAME }}/workflow-app:${{ github.run_id }}
+        tags: ${{ vars.DOCKERHUB_USERNAME }}/taskflow-apigateway:${{ github.run_id }}
         context: src/api-gateway/
         file: src/api-gateway/Dockerfile
 
@@ -65,7 +65,7 @@ jobs:
 
     - name: editing the deployment with the new version
       run: |
-        sed -i "s|image: .*|image: ${{ vars.DOCKERHUB_USERNAME }}/workflow-app:${{ github.run_id }}|g" kubernetes/api-gateway-svc/deploy.yaml
+        sed -i "s|image: .*|image: ${{ vars.DOCKERHUB_USERNAME }}/taskflow-apigateway:${{ github.run_id }}|g" kubernetes/api-gateway-svc/deploy.yaml
 
     - name: update-image
       run: |
