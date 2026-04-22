@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: abdelhadii/workflow-app:24808190859
+        image: abdelhadii/workflow-app:24808685423
         ports:
         - containerPort: 3000
 
