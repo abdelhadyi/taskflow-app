@@ -5,7 +5,6 @@ on:
       - main
     paths: 
       - 'src/frontend/**'
-      - 'kubernetes/frontend/**'
 
 jobs:
   Tests:
@@ -49,7 +48,7 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         push: true
-        tags: ${{ vars.DOCKERHUB_USERNAME }}/workflow-app:${{ github.run_id }}
+        tags: ${{ vars.DOCKERHUB_USERNAME }}/taskflow-app-frontend:${{ github.run_id }}
         context: src/frontend/
         file: src/frontend/Dockerfile
 
@@ -72,7 +71,6 @@ jobs:
       run: |
         git config --local user.email "abdelhady.elsayedd@gmail.com"
         git config --local user.name "abdelhadyi"
-        git pull --rebase origin ${{ github.head_ref }}
         git add kubernetes/frontend/deploy.yaml
         git commit -a -m "updating the image version to ${{ github.run_id }} [skip ci]"
         git push origin ${{ github.head_ref }}
