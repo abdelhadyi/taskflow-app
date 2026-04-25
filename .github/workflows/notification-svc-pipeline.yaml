@@ -1,0 +1,74 @@
+name: notification-service
+on:
+  pull_requests:
+    branches:
+    - main
+    paths:
+    - src/notification-service
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v6
+
+    - name: setup-python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.12' 
+
+    - name: lint
+      run: flake8 app/ --max-line-length=120
+      working-directory: src/notification-service
+
+    - name: test
+      run: pytest
+      working-directory: src/notification-service
+  
+  docker: 
+    runs-on: ubuntu-latest
+    needs: lint-test
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+      
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          push: true
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/taskflow-notfication:${{ github.run_id }}
+          context: src/notification-service/
+          file: src/notification-service/Dockerfile
+
+  update-image:
+    runs-on: ubuntu-latest
+    needs: docker
+    steps: 
+      - name: checkout
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          ref: ${{ github.head_ref }}
+      - name: edit-deployment
+        run: |
+          sed -i "s|image: .*|image: ${{ vars.DOCKERHUB_USERNAME }}/taskflow-notfication:${{ github.run_id }}|g" kubernetes/notification-service/deploy.yaml
+      
+      - name: PushToGithub
+        run: |
+          git config --global user.name abdelhadyi
+          git config --global user.email abdelhadyy.elsayed@gmail.com
+          git add kubernetes/notification-service/deploy.yaml
+          git commit -m "update the image version to ${{ github.run_id }} [skip-ci] "
+          git push origin ${{ github.head_ref }}
+
+
