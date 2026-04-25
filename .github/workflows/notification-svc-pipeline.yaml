@@ -1,6 +1,6 @@
 name: notification-service
 on:
-  pull_requests:
+  pull_request:
     branches:
     - main
     paths:
