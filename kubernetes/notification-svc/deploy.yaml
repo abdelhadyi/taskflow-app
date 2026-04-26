@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskflow-notification-deployment
+  labels:
+    app: taskflow-notification
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: taskflow-notification
+  template:
+    metadata:
+      labels:
+        app: taskflow-notification
+    spec:
+      containers:
+      - name: notification-svc
+        image: 
+        ports:
+        - containerPort: 8004
+
