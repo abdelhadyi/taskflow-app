@@ -20,7 +20,9 @@ jobs:
         python-version: '3.12' 
 
     - name: lint
-      run: flake8 app/ --max-line-length=120
+      run: |
+        pip install -r requirements.txt
+        flake8 app/ --max-line-length=120
       working-directory: src/notification-service
 
     - name: test
