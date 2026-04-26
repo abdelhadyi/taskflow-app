@@ -4,7 +4,8 @@ on:
     branches:
     - main
     paths:
-    - src/notification-service
+    - 'src/notification-service/**'
+    - '.github/workflows/notification-svc-pipeline.yaml'
 
 jobs:
   lint-test:
