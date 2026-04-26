@@ -64,7 +64,7 @@ jobs:
           ref: ${{ github.head_ref }}
       - name: edit-deployment
         run: |
-          sed -i "s|image: .*|image: ${{ vars.DOCKERHUB_USERNAME }}/taskflow-notfication:${{ github.run_id }}|g" kubernetes/notification-service/deploy.yaml
+          sed -i "s|image: .*|image: ${{ vars.DOCKERHUB_USERNAME }}/taskflow-notfication:${{ github.run_id }}|g" kubernetes/notification-svc/deploy.yaml
       
       - name: PushToGithub
         run: |
