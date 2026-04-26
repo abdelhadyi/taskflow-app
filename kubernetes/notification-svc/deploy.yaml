@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: notification-svc
-        image: abdelhadii/taskflow-notfication:24944624438
+        image: abdelhadii/taskflow-notfication:24944644231
         ports:
         - containerPort: 8004
 
