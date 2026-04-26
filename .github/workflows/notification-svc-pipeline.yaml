@@ -70,7 +70,7 @@ jobs:
         run: |
           git config --global user.name abdelhadyi
           git config --global user.email abdelhadyy.elsayed@gmail.com
-          git add kubernetes/notification-service/deploy.yaml
+          git add kubernetes/notification-svc/deploy.yaml
           git commit -m "update the image version to ${{ github.run_id }} [skip-ci] "
           git push origin ${{ github.head_ref }}
 
