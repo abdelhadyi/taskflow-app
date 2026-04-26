@@ -4,7 +4,6 @@ from fastapi import FastAPI
 from app.api.notifications import router as notif_router
 from app.db.database import get_pool, close_pool
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await get_pool()
