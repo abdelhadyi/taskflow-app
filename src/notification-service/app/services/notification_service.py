@@ -18,7 +18,7 @@ class NotificationService:
             data.user_id, data.type, data.title, data.body,
             data.reference_id, data.reference_type,
         )
-        return Notification(**dict(row))
+        return Notification(**row)
 
     async def list_for_user(self, user_id: int, unread_only: bool = False) -> list[Notification]:
         query = "SELECT * FROM notifications WHERE user_id=$1"
@@ -26,7 +26,7 @@ class NotificationService:
             query += " AND is_read=FALSE"
         query += " ORDER BY created_at DESC LIMIT 50"
         rows = await self.conn.fetch(query, user_id)
-        return [Notification(**dict(r)) for r in rows]
+        return [Notification(**r) for r in rows]
 
     async def mark_read(self, notification_id: int, user_id: int) -> Optional[Notification]:
         row = await self.conn.fetchrow(
@@ -37,7 +37,7 @@ class NotificationService:
             """,
             notification_id, user_id,
         )
-        return Notification(**dict(row)) if row else None
+        return Notification(**row) if row else None
 
     async def mark_all_read(self, user_id: int) -> int:
         result = await self.conn.execute(

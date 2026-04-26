@@ -11,11 +11,7 @@ def make_conn():
 
 
 def fake_row(data: dict):
-    rec = MagicMock()
-    rec.__iter__ = MagicMock(return_value=iter(data.items()))
-    rec.__getitem__ = MagicMock(side_effect=data.__getitem__)
-    return rec
-
+    return data
 
 BASE = {
     "id": 1, "user_id": 42, "type": "task_assigned",
