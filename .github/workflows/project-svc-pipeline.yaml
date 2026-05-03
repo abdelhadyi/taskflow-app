@@ -19,13 +19,13 @@ jobs:
         python-version: '3.12'
 
     - name: lint 
-      runs: |
+      run: |
         pip install -r requirements.txt 
         flake8 
       working-directory: src/project-service/
 
     - name: test
-      runs:
+      run:
         python -m pytest
       working-directory: src/project-service/
 
