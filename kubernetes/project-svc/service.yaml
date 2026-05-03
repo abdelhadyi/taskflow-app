@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: service
 metadata:
-  name: notification-service
+  name: project-service
 spec:
   selector:
-    app: taskflow-notification
+    app: taskflow-project
   ports:
     - protocol: TCP
-      port: 8004
+      port: 8002
