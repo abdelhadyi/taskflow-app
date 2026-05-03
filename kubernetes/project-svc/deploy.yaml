@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskflow-project-deployment
+  labels:
+    app: taskflow-project
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: taskflow-project
+  template:
+    metadata:
+      labels:
+        app: taskflow-project
+    spec:
+      containers:
+      - name: project
+        image: 
+        ports:
+        - containerPort: 8002
+
