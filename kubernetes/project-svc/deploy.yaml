@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: project-svc
-        image: abdelhadii/project-service:25293563866
+        image: abdelhadii/project-service:25294135455
         ports:
         - containerPort: 8002
 
