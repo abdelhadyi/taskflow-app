@@ -20,4 +20,3 @@ app.include_router(project_router)
 @app.get("/health")
 async def health():
     return {"status": "ok", "service": "project-service"}
-
