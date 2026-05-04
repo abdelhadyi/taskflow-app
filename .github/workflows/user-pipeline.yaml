@@ -1,0 +1,78 @@
+name: user service pipeline
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+    - main
+    paths:
+    - 'src/user-service/**'
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v6
+
+    - name: setup-go
+      uses: actions/setup-go@v6
+      with:
+        go-version: '1.22'
+
+    - name: golangci-lint
+      uses: golangci/golangci-lint-action@v9
+      with:
+        version: v2.11
+        working-directory: src/user-service/
+
+    - name: test
+      run: |
+        go mod tidy
+        go test ./...
+      working-directory: src/user-service/
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: tests 
+    steps:
+    - name: checkout
+      uses: actions/checkout@v6
+
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v4
+      with: 
+        username: ${{ vars.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v4
+
+    - name: Build and push
+      uses: docker/build-push-action@v7
+      with:
+        push: true
+        tags: ${{ vars.DOCKERHUB_USERNAME }}/taskflow-user:${{ github.run_id }}
+        context: src/user-service/
+        file: src/user-service/Dockerfile
+
+  update-image: 
+    runs-on: ubuntu-latest
+    needs: docker
+    steps:
+    - name: checkout
+      uses: actions/checkout@v6
+      with:
+        token: ${{ secrets.GH_TOKEN }}
+        ref: ${{ github.ref_name }}
+
+    - run: |
+        sed -i "s|image: .*|image: ${{ vars.DOCKERHUB_USERNAME }}/taskflow-user:${{ github.run_id }}|g" kubernetes/user-svc/deploy.yaml
+    
+    - run: |
+        git config --global user.name "abdelhadyi"
+        git config --global user.email "abdelhady.elsayedd@gmail.com"
+        git add kubernetes/user-svc/deploy.yaml
+        git commit -m "update user-svc-image tag to ${{ github.run_id }} [skip ci]" --allow-empty
+        git push origin ${{ github.ref_name }} --force
+
