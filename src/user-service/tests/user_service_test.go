@@ -11,6 +11,8 @@ import (
 	"github.com/taskflow/user-service/internal/model"
 	"github.com/taskflow/user-service/internal/repository"
 	"github.com/taskflow/user-service/internal/service"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // ── Mock repository ───────────────────────────────────────────────────────────
@@ -83,10 +85,9 @@ func TestLogin_Success(t *testing.T) {
 	repo := new(mockUserRepo)
 	svc  := service.NewUserService(repo)
 
-	// Pre-hash so bcrypt comparison succeeds
-	import_hash := "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy" // password: "secret"
+	hash, _ := bcrypt.GenerateFromPassword([]byte("secret"), bcrypt.DefaultCost)
 	repo.On("FindByEmail", mock.Anything, "bob@test.com").
-		Return(&model.User{ID: 2, Email: "bob@test.com", Password: import_hash, Role: "member"}, nil)
+		Return(&model.User{ID: 2, Email: "bob@test.com", Password: string(hash), Role: "member"}, nil)
 
 	req := &model.LoginRequest{Email: "bob@test.com", Password: "secret"}
 	resp, err := svc.Login(context.Background(), req)
