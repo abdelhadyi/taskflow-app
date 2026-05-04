@@ -1,0 +1,80 @@
+name: task service pipeline
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths: 
+    - 'src/task-service/**'
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v6 
+
+    - name: setup-go
+      uses: actions/setup-go@v6
+      with:
+        go-version: '1.22'
+
+    - name: lint
+      uses: golangci/golangci-lint-action@v9
+      with:
+        version: v2.11
+        working-directory: src/task-service/
+
+   - name: test
+     run: |
+       go mod tidy
+       go test ./...
+     working-directory: src/task-service/
+
+  
+  docker:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v6
+
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v4
+      with:
+        username: ${{ vars.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v4
+
+    - name: Build and push
+      uses: docker/build-push-action@v7
+      with:
+        push: true
+        tags: ${{ vars.DOCKERHUB_USERNAME }}/taskflow-task:${{ github.run_id }}
+        context: src/task-service/
+        file: src/task-service/Dockerfile
+
+  update-image:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v6
+      with:
+        ref: ${{ github.head_ref }}
+        token: ${{ secrets.GH_TOKEN }}
+
+    - name: update-deployment
+      run: |
+        sed -i "s|image: .*|image: ${{ vars.DOCKERHUB_USERNAME }}/taskflow-task:${{ github.run_id }}|g" kubernetes/task-svc/deploy.yaml
+
+    - name: git
+      run: |
+        git config --global user.name "abdelhady"
+        git config --global user.email "abdelhady_elsayedd@gmail.com"
+        git add kubernetes/task-svc/deploy.yaml
+        git commit -m "update task image tag [skip ci]"
+        git push origin ${{ github.head_ref }}
+
