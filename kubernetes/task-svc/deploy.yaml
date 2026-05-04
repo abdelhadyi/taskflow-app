@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskflow-task-deployment
+  labels:
+    app: taskflow-task
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: taskflow-task
+  template:
+    metadata:
+      labels:
+        app: taskflow-task
+    spec:
+      containers:
+      - name: task-svc
+        image: 
+        ports:
+        - containerPort: 8003
+

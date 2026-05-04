@@ -77,7 +77,7 @@ func (r *postgresRepo) List(ctx context.Context, f model.TaskFilter) ([]*model.T
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	var tasks []*model.Task
 	for rows.Next() {
 		t, err := scanTask(rows)
@@ -159,7 +159,7 @@ func (r *postgresRepo) ListComments(ctx context.Context, taskID int64) ([]*model
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	var comments []*model.Comment
 	for rows.Next() {
 		c := &model.Comment{}

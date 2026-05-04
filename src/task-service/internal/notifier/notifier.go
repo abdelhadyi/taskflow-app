@@ -44,6 +44,6 @@ func Send(ctx context.Context, p Payload) {
 		log.Printf("notifier: %v", err)
 		return
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	fmt.Printf("notifier: sent type=%s user=%d status=%d\n", p.Type, p.UserID, resp.StatusCode)
 }
