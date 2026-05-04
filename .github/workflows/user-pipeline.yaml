@@ -64,7 +64,7 @@ jobs:
       uses: actions/checkout@v6
       with:
         token: ${{ secrets.GH_TOKEN }}
-        ref: ${{ github.ref_name }}
+        ref: ${{ github.head_ref }}
 
     - run: |
         sed -i "s|image: .*|image: ${{ vars.DOCKERHUB_USERNAME }}/taskflow-user:${{ github.run_id }}|g" kubernetes/user-svc/deploy.yaml
@@ -74,5 +74,5 @@ jobs:
         git config --global user.email "abdelhady.elsayedd@gmail.com"
         git add kubernetes/user-svc/deploy.yaml
         git commit -m "update user-svc-image tag to ${{ github.run_id }} [skip ci]" --allow-empty
-        git push origin ${{ github.ref_name }} --force
+        git push origin ${{ github.head_ref }} --force
 

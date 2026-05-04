@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskflow-user-deployment
+  labels:
+    app: taskflow-user
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: taskflow-user
+  template:
+    metadata:
+      labels:
+        app: taskflow-user
+    spec:
+      containers:
+      - name: user-svc
+        image: abdelhadii/taskflow-user:25296142783
+        ports:
+        - containerPort: 8001
+
