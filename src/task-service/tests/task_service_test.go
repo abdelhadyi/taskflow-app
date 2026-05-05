@@ -93,6 +93,7 @@ func TestUpdateTask_Success(t *testing.T) {
 	done := model.StatusDone
 	req  := &model.UpdateTaskRequest{Status: &done}
 	updated := newTask(); updated.Status = model.StatusDone
+	repo.On("FindByID", mock.Anything, int64(1)).Return(newTask(), nil)
 	repo.On("Update", mock.Anything, int64(1), req).Return(updated, nil)
 	result, err := svc.UpdateTask(context.Background(), 1, req)
 	assert.NoError(t, err)
@@ -112,6 +113,7 @@ func TestAddComment(t *testing.T) {
 	svc  := service.NewTaskService(repo)
 	comment := &model.Comment{ID: 1, TaskID: 1, UserID: 42, Content: "LGTM", CreatedAt: time.Now()}
 	repo.On("CreateComment", mock.Anything, mock.AnythingOfType("*model.Comment")).Return(comment, nil)
+	repo.On("FindByID", mock.Anything, int64(1)).Return(newTask(), nil)
 	result, err := svc.AddComment(context.Background(), 1, 42, &model.CreateCommentRequest{Content: "LGTM"})
 	assert.NoError(t, err)
 	assert.Equal(t, "LGTM", result.Content)
