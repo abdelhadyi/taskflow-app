@@ -31,7 +31,7 @@ func main() {
 	if err = db.Ping(); err != nil {
 		log.Fatalf("connecting db: %v", err)
 	}
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	repo := repository.NewPostgresRepo(db)
 	svc  := service.NewTaskService(repo)
@@ -54,7 +54,7 @@ func main() {
 
 	port := getenv("PORT", "8003")
 	log.Printf("Task service running on :%s", port)
-	r.Run(":" + port)
+	if err := r.Run(":" + port); err != nil { log.Fatalf("server: %v", err) }
 }
 
 func getenv(k, def string) string {

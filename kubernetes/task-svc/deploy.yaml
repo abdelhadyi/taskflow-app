@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: task-svc
-        image: 
+        image: abdelhadii/taskflow-task:25352128099
         ports:
         - containerPort: 8003
 
