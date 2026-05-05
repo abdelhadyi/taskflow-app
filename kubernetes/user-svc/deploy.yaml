@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: user-svc
-        image: 
+        image: abdelhadii/taskflow-user:25296142783
         ports:
         - containerPort: 8001
 
