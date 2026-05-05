@@ -24,11 +24,11 @@ jobs:
         version: v2.11
         working-directory: src/task-service/
 
-   - name: test
-     run: |
-       go mod tidy
-       go test ./...
-     working-directory: src/task-service/
+    - name: test
+      run: |
+        go mod tidy
+        go test ./...
+      working-directory: src/task-service/
 
   
   docker:
