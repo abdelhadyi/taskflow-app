@@ -1,5 +1,6 @@
 name: notification-service
 on:
+  workflow_dispatch:
   pull_request:
     branches:
     - main

@@ -22,7 +22,7 @@ class ProjectService:
             "INSERT INTO project_members (project_id, user_id, role) VALUES ($1, $2, 'owner')",
             row["id"], owner_id,
         )
-        return Project(**dict(row))
+        return Project(**row)
 
     async def get(self, project_id: int, user_id: int) -> Optional[Project]:
         row = await self.conn.fetchrow(
@@ -33,7 +33,7 @@ class ProjectService:
             """,
             project_id, user_id,
         )
-        return Project(**dict(row)) if row else None
+        return Project(**row) if row else None
 
     async def list_for_user(self, user_id: int) -> list[Project]:
         rows = await self.conn.fetch(
@@ -45,7 +45,7 @@ class ProjectService:
             """,
             user_id,
         )
-        return [Project(**dict(r)) for r in rows]
+        return [Project(**r) for r in rows]
 
     async def update(self, project_id: int, user_id: int, data: ProjectUpdate) -> Optional[Project]:
         # Only owner/admin can update
@@ -66,7 +66,7 @@ class ProjectService:
             f"UPDATE projects SET {set_clause}, updated_at=NOW() WHERE id=$1 RETURNING *",
             project_id, *values,
         )
-        return Project(**dict(row)) if row else None
+        return Project(**row) if row else None
 
     async def delete(self, project_id: int, user_id: int) -> bool:
         member = await self.conn.fetchrow(
@@ -94,7 +94,7 @@ class ProjectService:
             """,
             project_id, data.user_id, data.role,
         )
-        return Member(**dict(row)) if row else None
+        return Member(**row) if row else None
 
     async def list_members(self, project_id: int, user_id: int) -> list[Member]:
         # must be a member to view members
@@ -107,7 +107,7 @@ class ProjectService:
             """,
             project_id, user_id,
         )
-        return [Member(**dict(r)) for r in rows]
+        return [Member(**r) for r in rows]
 
     async def remove_member(self, project_id: int, requester_id: int, target_user_id: int) -> bool:
         member = await self.conn.fetchrow(
