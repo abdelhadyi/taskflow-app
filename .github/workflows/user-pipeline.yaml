@@ -71,9 +71,10 @@ jobs:
         sed -i "s|image: .*|image: ${{ secrets.ACC_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/taskflow-user:${{ github.run_id }}|g" kubernetes/user-svc/deploy.yaml    
 
     - run: |
+        TARGET_BRANCH= "${{ github.head_ref || github.ref_name }}"
         git config --global user.name "abdelhadyi"
         git config --global user.email "abdelhady.elsayedd@gmail.com"
         git add kubernetes/user-svc/deploy.yaml
         git commit -m "update user-svc-image tag to ${{ github.run_id }} [skip ci]" --allow-empty
-        git push origin ${{ github.head_ref }} --force
+        git push origin "$TARGET_BRANCH" --force
 
