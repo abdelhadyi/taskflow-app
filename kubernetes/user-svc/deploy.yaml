@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: user-svc
-        image: abdelhadii/taskflow-user:25296142783
+        image: 383189130746.dkr.ecr.us-east-1.amazonaws.com/taskflow-user:26792467405
         ports:
         - containerPort: 8001
 
