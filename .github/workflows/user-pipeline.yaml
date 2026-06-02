@@ -71,7 +71,7 @@ jobs:
         sed -i "s|image: .*|image: ${{ secrets.ACC_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/taskflow-user:${{ github.run_id }}|g" kubernetes/user-svc/deploy.yaml    
 
     - run: |
-        TARGET_BRANCH= "${{ github.head_ref || github.ref_name }}"
+        TARGET_BRANCH="${{ github.head_ref || github.ref_name }}"
         git config --global user.name "abdelhadyi"
         git config --global user.email "abdelhady.elsayedd@gmail.com"
         git add kubernetes/user-svc/deploy.yaml
