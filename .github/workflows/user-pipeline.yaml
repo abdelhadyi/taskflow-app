@@ -53,7 +53,8 @@ jobs:
 
     - name: Build, tag, and push image to Amazon ECR
       run: |
-        docker build -t ${{ secrets.ACC_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/taskflow-user:${{ github.run_id }} src/user-service/Dockerfile
+        cd src/user-service
+        docker build -t ${{ secrets.ACC_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/taskflow-user:${{ github.run_id }} .
         docker push ${{ secrets.ACC_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/taskflow-user:${{ github.run_id }}
 
   update-image: 
