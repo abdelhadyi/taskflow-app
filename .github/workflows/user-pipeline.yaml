@@ -58,7 +58,7 @@ jobs:
 
   update-image: 
     runs-on: ubuntu-latest
-    needs: docker
+    needs: ecr
     steps:
     - name: checkout
       uses: actions/checkout@v6
