@@ -1,5 +1,6 @@
 name: project service pipeline
 on:
+  workflow_dispatch:
   pull_request:
     branches:
     - main
@@ -21,7 +22,7 @@ jobs:
     - name: lint 
       run: |
         pip install -r requirements.txt 
-        flake8 
+        flake8 app/ --max-line-length=120 
       working-directory: src/project-service/
 
     - name: test
@@ -51,7 +52,7 @@ jobs:
         push: true
         context: src/project-service/
         file: src/project-service/Dockerfile
-        tags: ${{vars.DOCKERHUB_USERNAME}}/project-service:${{ github.run_id }}
+        tags: ${{vars.DOCKERHUB_USERNAME}}/taskflow-project:${{ github.run_id }}
 
   update-image:
     needs: docker

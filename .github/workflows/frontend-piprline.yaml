@@ -5,6 +5,7 @@ on:
       - main
     paths: 
       - 'src/frontend/**'
+  workflow_dispatch:
 
 jobs:
   Tests:
